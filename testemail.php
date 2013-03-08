@@ -23,7 +23,7 @@ if(!defined('DS')){
  * @author 	Puneet Singhal
  * 
  */
-class  plgSystemTestemail extends XiPlugin
+class  plgSystemTestemail extends JPlugin
 {
 	public $_app = null;
 	protected $_tplVars = array();
