@@ -7,8 +7,8 @@
     <author>Team JoomlaXi</author>
     <authorEmail>puneetsinghal.11@gmail.com</authorEmail>
     <authorUrl>http://www.joomlaxi.com</authorUrl>
-    <copyright>2009-13 Ready Bytes Software Labs Pvt. Ltd.</copyright>
-    <license>GNU General Public License v2</license>
+    <copyright></copyright>
+    <license></license>
     <description>Test Email Settings</description>
 	<files>
 		<filename plugin="testemail">testemail.php</filename>

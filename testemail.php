@@ -1,9 +1,8 @@
 <?php
 
 /**
-* @copyright	Copyright (C) 2009 - 2009 Ready Bytes Software Labs Pvt. Ltd. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
-* @contact		shyam@joomlaxi.com
+* @contact		puneetsinghal.11@gmail.com
 */
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -17,11 +16,11 @@ if(!defined('DS')){
 }
 
 /**
- * Payplans System Plugin
+ * System Plugin
  *
  * @package	Test Email
  * @subpackage	Plugin
- * @author Puneet Singhal
+ * @author 	Puneet Singhal
  * 
  */
 class  plgSystemTestemail extends XiPlugin
@@ -57,10 +56,6 @@ class  plgSystemTestemail extends XiPlugin
 		return true;
 	}
 
-	public function onAfterDispatch()
-	{
-		
-	}
 	/**
 	 * Add a image just before </body> tag
 	 * which will href to cron trigger.
@@ -99,11 +94,6 @@ class  plgSystemTestemail extends XiPlugin
 		JResponse::setBody($body);
 		
 		}
-
-	function onAfterInitialise()
-	{
-		
-	}
     
 }
 
