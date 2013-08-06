@@ -13,6 +13,12 @@
 	<files>
 		<filename plugin="testemail">testemail.php</filename>
 	</files>
-	<params>
-	</params>
+	<!-- RB Framework Langauge -->
+	<languages>
+		<language tag="en-GB">languages/en-GB.plg_system_testemail.ini</language>
+		<language tag="en-GB">languages/en-GB.plg_system_testemail.sys.ini</language>
+	</languages>
+	
+	<config>
+	</config>
 </extension>

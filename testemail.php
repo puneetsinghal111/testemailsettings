@@ -26,8 +26,15 @@ if(!defined('DS')){
  */
 class  plgSystemTestemail extends JPlugin
 {
-	public $_app = null;
-	protected $_tplVars = array();
+	/**
+	 * Load the language file on instantiation.
+	 *
+	 * @var    boolean
+	 * @since  3.1
+	 */
+	protected 	$autoloadLanguage 	= true;
+	public 		$_app 				= null;
+	protected 	$_tplVars 			= array();
 
 	function __construct(& $subject, $config = array())
 	{
@@ -59,7 +66,7 @@ class  plgSystemTestemail extends JPlugin
 	
 	function onAfterRoute()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = $this->_app->input;
 		$option = $input->get('option', false);
 		$rbsl 	= $input->get('rbsl', false);
 		
@@ -68,13 +75,13 @@ class  plgSystemTestemail extends JPlugin
 		}
 		
 		$from 	= $input->get('from_email', false, 'string');
-		$date = JDate::getInstance()->toSql();
+		$sender = $input->get('from_name', false);
+		$date 	= JDate::getInstance()->toSql();
 		
-		$sender  = 'Test User';
-		$subject = 'Congratulations your emailing is working perfectly';
-		$body 	 = 'Hip-hip hurrrayyyyy. Current Time is: '.$date;
+		$subject = JText::_('PLG_SYSTEM_TESTEMAIL_EMAIL_SUBJECT');
+		$body 	 = JText::sprintf('PLG_SYSTEM_TESTEMAIL_EMAIL_BODY', $date);
 		$result	 = array();
-		$message = 'Email send successfully. <strong>IMPORTANT:</strong> Save your current email settings.';
+		$message = JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_SUCCESS');
 		$state	 = 'message';
 		
 		$mailer = self::createMailer();
@@ -82,7 +89,7 @@ class  plgSystemTestemail extends JPlugin
 		if ($mailer->sendMail($from, $sender, $from, $subject, $body) !== true)
 		{
 			if(JVERSION < 3.0){
-				$message = 'Email sending failed. Check your email settings and try again.';
+				$message = JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_ERROR');
 				$state	 = 'error';
 			}else {
 				$this->_getJ30ErrorMsz();
@@ -91,9 +98,8 @@ class  plgSystemTestemail extends JPlugin
 		
 		if(JVERSION < 3.0){
 			$url = JURI::root().DS.'administrator'.DS.'index.php?option=com_config';
-			$app = JFactory::getApplication();
-			$app->enqueueMessage($message, $state);
-			$app->redirect($url);
+			$this->_app->enqueueMessage($message, $state);
+			$this->_app->redirect($url);
 			return true;
 		}
 		
@@ -102,7 +108,7 @@ class  plgSystemTestemail extends JPlugin
 	
 	protected static function createMailer()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = $this->_app->input;
 
 		$smtpauth 	= $input->get('smtp_auth', 0);
 		$smtpuser 	= $input->get('smtp_user', false, 'string');
@@ -142,7 +148,7 @@ class  plgSystemTestemail extends JPlugin
 	protected function _getJ30ErrorMsz()
 	{
 		$result['status'] = 'error';
-		$result['message']= 'Email sending failed. Check your email settings and try again.';
+		$result['message']= JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_ERROR');
 		$result = json_encode($result);
 		
 		echo $result;
@@ -152,7 +158,7 @@ class  plgSystemTestemail extends JPlugin
 	protected function _getJ30SuccessMsz()
 	{
 		$result['status'] = 'success';
-		$result['message']= 'Email send successfully. <strong>IMPORTANT:</strong> Save your current email settings.';
+		$result['message']= JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_SUCCESS');
 		$result = json_encode($result);
 
 		echo $result;
@@ -216,10 +222,10 @@ class  plgSystemTestemail extends JPlugin
 		<script type="text/javascript">
 			(function($){
 				$(document).ready(function(){
-					$("#toolbar").append("<button class=\"btn\" type=submit id=jxi_test_email><i class=\"icon-wrench\"></i>&nbsp;Test Email</button>");
+					$("#jform_mailer-lbl").closest('fieldset').find('legend').append("<button class=\"btn pull-right\" type=button id=jxi_test_email><i class=\"icon-wrench\"></i>&nbsp;Test Email</button>");
 					$("#content").prepend("<div id=\"jxi_email_msg\">&nbsp;</div>");
 
-					$("#jxi_test_email").click(function(){
+					$("#jxi_test_email").live('click', function(){
 						$('body').css('opacity','0.4');
 						var smtp_auth	= 1;
 						if($('#jform_smtpauth1').prop("checked")){
@@ -228,20 +234,32 @@ class  plgSystemTestemail extends JPlugin
 
 						var url = "<?php echo $root;?>";
 						url = url + 'administrator/index.php?option=com_config&';
-						url = url + 'from_email=' 	+ $("#jform_mailfrom").val() + '&';
-						url = url + 'mailer=' 		+ $('#jform_mailer :selected').val() + '&';
-						url = url + 'from_name=' 	+ $('#jform_fromname').val() + '&';
-						url = url + 'send_path=' 	+ $('#jform_sendmail').val() + '&';
-						url = url + 'smtp_auth=' 	+ smtp_auth + '&';
-						url = url + 'smtp_secure=' 	+ $('#jform_smtpsecure :selected').val() + '&';
-						url = url + 'smtp_port=' 	+ $('#jform_smtpport').val() + '&';
-						url = url + 'smtp_user=' 	+ $('#jform_smtpuser').val() + '&';
-						url = url + 'smtp_pass=' 	+ $('#jform_smtppass').val() + '&';
-						url = url + 'smtp_host=' 	+ $('#jform_smtphost').val() + '&';
 						url = url + 'rbsl=1';
 						
-						//$(this).load(url);
-						$.get(url, function(data, status){
+						var from_email	= $("#jform_mailfrom").val();
+						var mailer		= $('#jform_mailer :selected').val();
+						var from_name	= $('#jform_fromname').val();
+						var send_path	= $('#jform_sendmail').val();
+						var smtp_secure	= $('#jform_smtpsecure :selected').val();
+						var smtp_port	= $('#jform_smtpport').val();
+						var smtp_user	= $('#jform_smtpuser').val();
+						var smtp_pass	= $('#jform_smtppass').val();
+						var smtp_host	= $('#jform_smtphost').val();
+						
+						$.post(url, 
+								{
+									from_email 	: from_email,
+									mailer		: mailer,
+									from_name	: from_name,
+									send_path	: send_path,
+									smtp_auth	: smtp_auth,
+									smtp_secure	: smtp_secure,
+									smtp_port	: smtp_port,
+									smtp_user	: smtp_user,
+									smtp_pass	: smtp_pass,
+									smtp_host	: smtp_host
+								},
+								function(data, status){
 							var record = JSON.parse(data);
 							$('body').css('opacity','1');
 
@@ -258,6 +276,8 @@ class  plgSystemTestemail extends JPlugin
 								var message = record.message; 
 								$('#jxi_email_msg').html(message);
 							}
+
+							alert(message);
 							
 						});
 					});
