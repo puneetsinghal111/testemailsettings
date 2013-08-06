@@ -40,6 +40,10 @@ class  plgSystemTestemail extends JPlugin
 	{
 		parent::__construct($subject, $config);
 		$this->_app = JFactory::getApplication();
+		
+		if(JVERSION < 3.0){
+			$this->loadLanguage();
+		}
 	}
 	
 	function onAfterRender()
@@ -68,9 +72,9 @@ class  plgSystemTestemail extends JPlugin
 	{
 		$input = $this->_app->input;
 		$option = $input->get('option', false);
-		$rbsl 	= $input->get('rbsl', false);
+		$is_testemail = $input->get('plg_testemail', false);
 		
-		if($option != 'com_config' || !$rbsl){
+		if($option != 'com_config' || !$is_testemail){
 			return true;
 		}
 		
@@ -88,27 +92,15 @@ class  plgSystemTestemail extends JPlugin
 		
 		if ($mailer->sendMail($from, $sender, $from, $subject, $body) !== true)
 		{
-			if(JVERSION < 3.0){
-				$message = JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_ERROR');
-				$state	 = 'error';
-			}else {
-				$this->_getJ30ErrorMsz();
-			}
+			$this->_error();
 		}
 		
-		if(JVERSION < 3.0){
-			$url = JURI::root().DS.'administrator'.DS.'index.php?option=com_config';
-			$this->_app->enqueueMessage($message, $state);
-			$this->_app->redirect($url);
-			return true;
-		}
-		
-		$this->_getJ30SuccessMsz();
+		$this->_success();
 	}
 	
 	protected static function createMailer()
 	{
-		$input = $this->_app->input;
+		$input = JFactory::getApplication()->input;
 
 		$smtpauth 	= $input->get('smtp_auth', 0);
 		$smtpuser 	= $input->get('smtp_user', false, 'string');
@@ -145,7 +137,7 @@ class  plgSystemTestemail extends JPlugin
 		return $mail;
 	}
 	
-	protected function _getJ30ErrorMsz()
+	protected function _error()
 	{
 		$result['status'] = 'error';
 		$result['message']= JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_ERROR');
@@ -155,7 +147,7 @@ class  plgSystemTestemail extends JPlugin
 		exit();
 	}
 	
-	protected function _getJ30SuccessMsz()
+	protected function _success()
 	{
 		$result['status'] = 'success';
 		$result['message']= JText::_('PLG_SYSTEM_TESTEMAIL_MESSAGE_SUCCESS');
@@ -167,54 +159,72 @@ class  plgSystemTestemail extends JPlugin
 	
 	private function _getJ25Html()
 	{
-		$root = JURI::root();
 		ob_start();
 		?>
 		
-		<script type="text/javascript">
-			function send_email(){
-				var from_email = document.getElementById("jform_mailfrom").value;
-				var url = "<?php echo $root; ?>";
-
-				var e = document.getElementById("jform_mailer");
-				var mailer = e.options[e.selectedIndex].value;
-
-				var e = document.getElementById("jform_smtpsecure");
-				var smtp_secure = e.options[e.selectedIndex].value;
-
-				var smtp_auth	= 1;
-				if(document.getElementById('jform_smtpauth1').checked){
-					smtp_auth	= 0;
-				}
-				
-				url = url + 'administrator/index.php?option=com_config&';
-				url = url + 'from_email=' 	+ document.getElementById("jform_mailfrom").value + '&';
-				url = url + 'mailer=' 		+ mailer + '&';
-				url = url + 'from_name=' 	+ document.getElementById("jform_mailfrom").value + '&';
-				url = url + 'send_path=' 	+ document.getElementById("jform_sendmail").value + '&';
-				url = url + 'smtp_auth=' 	+ smtp_auth + '&';
-				url = url + 'smtp_secure=' 	+ smtp_secure + '&';
-				url = url + 'smtp_port=' 	+ document.getElementById("jform_smtpport").value + '&';
-				url = url + 'smtp_user=' 	+ document.getElementById("jform_smtpuser").value + '&';
-				url = url + 'smtp_pass=' 	+ document.getElementById("jform_smtppass").value + '&';
-				url = url + 'smtp_host=' 	+ document.getElementById("jform_smtphost").value + '&';
-				url = url + 'rbsl=1';
-
-				window.location = url;
+		<style type="text/css">
+			.btn {
+			  display: inline-block;
+			  padding: 6px 12px;
+			  margin-bottom: 0;
+			  font-size: 14px;
+			  font-weight: 500;
+			  line-height: 1.428571429;
+			  text-align: center;
+			  white-space: nowrap;
+			  vertical-align: middle;
+			  cursor: pointer;
+			  border: 1px solid #ccc;
+			  border-radius: 4px;
+			  -webkit-user-select: none;
+			     -moz-user-select: none;
+			      -ms-user-select: none;
+			       -o-user-select: none;
+			          user-select: none;
 			}
-
-			var toolbar = document.getElementById("toolbar");
-			toolbar.innerHTML = toolbar.innerHTML + "<a id=\"jxi_test_email\" href=\"#\" onclick=\"javascript:send_email();\" style=\"margin:14% 14% 0 0; font-weight:bold; float:right;\">Test Email</a>";
+			
+			.pull-right{
+				float: right;
+			}
+		</style>
+		
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script type="text/javascript">
+			(function($){
+				$(document).ready(function(){
+					$("#jform_mailer-lbl").parent().append("<button class=\"btn pull-right\" type=\"button\" id=\"jxi_test_email\"><i class=\"icon-wrench\"></i>&nbsp;Test Email</button>");
+				});
+			})(jQuery);
 		</script>
 		
 		<?php 
 		$html = ob_get_contents();
 		ob_end_clean();
-		
+		$html .= $this->_getTestEmailScript();
 		return $html;
 	}
 	
 	private function _getJ30Html()
+	{
+		ob_start();
+		?>
+		<script type="text/javascript">
+			(function($){
+				$(document).ready(function(){
+					$("#jform_mailer-lbl").closest('fieldset').find('legend').append("<button class=\"btn pull-right\" type=\"button\" id=jxi_test_email><i class=\"icon-wrench\"></i>&nbsp;Test Email</button>");
+					$("#content").prepend("<div id=\"jxi_email_msg\">&nbsp;</div>");
+				});
+			})(jQuery);
+		</script>
+		
+		<?php 
+		$html = ob_get_contents();
+		ob_end_clean();
+		$html .= $this->_getTestEmailScript();
+		return $html;
+	}
+	
+	private function _getTestEmailScript()
 	{
 		$root = JURI::root();
 		ob_start();
@@ -222,10 +232,7 @@ class  plgSystemTestemail extends JPlugin
 		<script type="text/javascript">
 			(function($){
 				$(document).ready(function(){
-					$("#jform_mailer-lbl").closest('fieldset').find('legend').append("<button class=\"btn pull-right\" type=button id=jxi_test_email><i class=\"icon-wrench\"></i>&nbsp;Test Email</button>");
-					$("#content").prepend("<div id=\"jxi_email_msg\">&nbsp;</div>");
-
-					$("#jxi_test_email").live('click', function(){
+					$("#jxi_test_email").click(function(){
 						$('body').css('opacity','0.4');
 						var smtp_auth	= 1;
 						if($('#jform_smtpauth1').prop("checked")){
@@ -234,7 +241,7 @@ class  plgSystemTestemail extends JPlugin
 
 						var url = "<?php echo $root;?>";
 						url = url + 'administrator/index.php?option=com_config&';
-						url = url + 'rbsl=1';
+						url = url + 'plg_testemail=1';
 						
 						var from_email	= $("#jform_mailfrom").val();
 						var mailer		= $('#jform_mailer :selected').val();
