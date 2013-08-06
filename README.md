@@ -1,10 +1,10 @@
-This plugin can be used to test email configuration of Joomla.
-Set all the settings and test whether they are working correctly  or not.
-This plugin is compatible with Joomla 2.5 and 3.0.
+Hello Friends,
 
-Please share your thoughts and words with me.
+This is an AJAXIFIED "email configuration testing" plugin for Joomla 2.5 and 3.x.
+Just set the proper values and click on "Test Email" button. This plugin will test your email configuration and do respond, with-in a sec.
+
+Get the plugin and share your thoughts and words with me.
 
 
 Thank You,
-
 Puneet Singhal
