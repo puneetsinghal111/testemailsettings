@@ -1,6 +1,6 @@
-Hello Friends,
+# JEmail Config Verifier(JCV)
 
-JEmail Config Verifier(JCV) is an AJAXIFIED plugin for Joomla 2.5 and 3.x. This plugin helps you to verify your email configurations. 
+This is an AJAXIFIED plugin which helps you to verify your email configurations. It is compatible with Joomla 2.5 and 3.x versions.
 
 
 # How to use
