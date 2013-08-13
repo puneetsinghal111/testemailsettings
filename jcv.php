@@ -21,10 +21,10 @@ if(!defined('DS')){
  *
  * @package	Test Email
  * @subpackage	Plugin
- * @author 	puneetsinghal.11@gmail.com
+ * @author 	puneetsinghal@readybytes.in
  * 
  */
-class  plgSystemTestemail extends JPlugin
+class  plgSystemJcv extends JPlugin
 {
 	/**
 	 * Load the language file on instantiation.

@@ -5,7 +5,7 @@
     <version>3.0.1</version>
     <creationDate>July 2013</creationDate>
     <author>Team JPayplans</author>
-    <authorEmail>puneet@readybytes.in</authorEmail>
+    <authorEmail>puneetsinghal@readybytes.in</authorEmail>
     <authorUrl>http://www.jpayplans.com</authorUrl>
     <copyright></copyright>
     <license></license>
@@ -16,12 +16,12 @@
     			4) IMP: You do not need to save global configuration again and again. Just set the values and click on button. It will test your settings with-in few seconds.&lt;br /&gt;
 	</description>
 	<files>
-		<filename plugin="testemail">testemail.php</filename>
+		<filename plugin="jcv">jcv.php</filename>
 	</files>
 	<!-- RB Framework Langauge -->
 	<languages>
-		<language tag="en-GB">languages/en-GB.plg_system_testemail.ini</language>
-		<language tag="en-GB">languages/en-GB.plg_system_testemail.sys.ini</language>
+		<language tag="en-GB">languages/en-GB.plg_system_jcv.ini</language>
+		<language tag="en-GB">languages/en-GB.plg_system_jcv.sys.ini</language>
 	</languages>
 	
 	<config>
