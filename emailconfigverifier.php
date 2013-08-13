@@ -24,7 +24,7 @@ if(!defined('DS')){
  * @author 	puneetsinghal@readybytes.in
  * 
  */
-class  plgSystemJcv extends JPlugin
+class  plgSystemEmailconfigverifier extends JPlugin
 {
 	/**
 	 * Load the language file on instantiation.
@@ -211,7 +211,17 @@ class  plgSystemJcv extends JPlugin
 		<script type="text/javascript">
 			(function($){
 				$(document).ready(function(){
-					$("#jform_mailer-lbl").closest('fieldset').find('legend').append("<button class=\"btn pull-right\" type=\"button\" id=jxi_test_email><i class=\"icon-wrench\"></i>&nbsp;Test Email</button>");
+					var html = "<span class=\"pull-right center\" style=\"line-height:1px;\">";
+						html = html + "<button class=\"btn\" type=\"button\" id=jxi_test_email>";
+						html = html + "<i class=\"icon-wrench\"></i>&nbsp;Test Email";
+						html = html + "</button><br/>";
+						html = html + "<span style=\"font-size:9px; \">";
+						html = html + "PoweredBy ";
+						html = html + "<a href=\"http:\/\/www.jpayplans.com\" target=\"_blank\">Ready Bytes</a>"
+						html = html + "</span>";
+						html = html + "</span>";
+						
+					$("#jform_mailer-lbl").closest('fieldset').find('legend').append(html);
 					$("#content").prepend("<div id=\"jxi_email_msg\">&nbsp;</div>");
 				});
 			})(jQuery);
@@ -299,3 +309,4 @@ class  plgSystemJcv extends JPlugin
 	}
 	
 }
+
