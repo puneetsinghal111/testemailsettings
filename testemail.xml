@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="system" method="upgrade">
 
-    <name>System-Test Email</name>
+    <name>JEmail Config Verifier (JCV)</name>
     <version>3.0.1</version>
-    <creationDate>March 2013</creationDate>
-    <author>Team JoomlaXi</author>
-    <authorEmail>puneetsinghal.11@gmail.com</authorEmail>
-    <authorUrl>http://www.joomlaxi.com</authorUrl>
+    <creationDate>July 2013</creationDate>
+    <author>Team JPayplans</author>
+    <authorEmail>puneet@readybytes.in</authorEmail>
+    <authorUrl>http://www.jpayplans.com</authorUrl>
     <copyright></copyright>
     <license></license>
-    <description>Test Email Settings</description>
+    <description>Test and verify your email configuration settings. Follow these steps to use this plugin :- &lt;br /&gt; 
+    			1) Go to Global Configuration.&lt;br /&gt; 
+    			2) Now, select Server tab. Here you will get  &lt;strong&gt; Test Email &lt;/strong&gt; button.  &lt;br /&gt; 
+    			3) Set email configuration and click on Test Email button. &lt;br /&gt; 
+    			4) IMP: You do not need to save global configuration again and again. Just set the values and click on button. It will test your settings with-in few seconds.&lt;br /&gt;
+	</description>
 	<files>
 		<filename plugin="testemail">testemail.php</filename>
 	</files>
